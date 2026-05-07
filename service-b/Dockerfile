@@ -1,12 +1,21 @@
-# Service B Dockerfile
-FROM node:18
+# Service-b Dockerfile
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
+COPY package.json ./
+
+RUN npm install --only=production
+
+FROM node:20-slim
+
+USER node
+
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
 COPY . .
 
-RUN npm install
-
-USER root
+ENV SERVICE_A_URL=http://service-a:5000
 
 CMD ["node", "worker.js"]
