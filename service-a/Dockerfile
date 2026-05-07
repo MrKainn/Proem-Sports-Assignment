@@ -1,17 +1,19 @@
 # Service A Dockerfile
-FROM python:3.11
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-RUN pip install -r requirements.txt
-
-ENV SECRET_KEY=supersecret123
-ENV DB_PASSWORD=admin1234
+RUN adduser --disabled-password --gecos "" appuser
+USER appuser
 
 EXPOSE 5000
 
-USER root
-
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "3", "app:app"]
