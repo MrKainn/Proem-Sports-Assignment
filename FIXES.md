@@ -6,7 +6,7 @@ Document every issue you find and fix in this file.
 
 ## For DockerFile
 
-## Fix 1: [Layer Caching]
+### Fix 1: [Layer Caching]
 
 **What was wrong:**
 Earlier, you were Copying all files before installing dependencies.
@@ -22,7 +22,7 @@ Every single line changed in code, Docker will take it as new and re downloads e
 
 ---
 
-## Fix 2: [Root User Security]
+### Fix 2: [Root User Security]
 
 **What was wrong:**
 Letting the application run with full administrative (root) privileges inside the container.
@@ -40,7 +40,7 @@ Any hacker if get access can owns the container as root user and may attack the 
 
 ## For Docker-compose File
 
-## Fix 1: [Service B unable to reach Service A at localhost]
+### Fix 1: [Service B unable to reach Service A at localhost]
 
 **What was wrong:**
 Service B was trying to find Service A at localhost.
@@ -53,9 +53,10 @@ We used the service name service-a in the SERVICE_A_URL.
 
 **What could go wrong if left unfixed:**
 Service B will not be able to reach Service A and connection gets failed.
+
 ---
 
-## Fix 2: [Secrets Management]
+### Fix 2: [Secrets Management]
 
 **What was wrong:**
 Sensitive credentials like DB_PASSWORD were written in plain text directly inside the docker-compose file.
@@ -73,7 +74,7 @@ If this isn't fixed, anyone with repository access can access the DB password an
 
 ## For Terraform
 
-## Fix 1: [Credentials Management]
+### Fix 1: [Credentials Management]
 
 **What was wrong:**
 access_key and secret_key were hardcoded directly in the provider "aws" block.
@@ -89,7 +90,7 @@ If you push that code to a public (or even private) Git repository, bots will fi
 
 ---
 
-## Fix 2: [Excess Security Group Rules]
+### Fix 2: [Excess Security Group Rules]
 
 **What was wrong:**
 You opened ports 0 to 65535 for 0.0.0.0/0 that is for every port in existence.
@@ -105,7 +106,7 @@ Any hacker can try to attack any service running on your server, even those you 
 
 ---
 
-## Fix 3: [Added variables.tf]
+### Fix 3: [Added variables.tf]
 
 **What was wrong:**
 You didn't have a separate variables file. Everything is configured as hardcoded.
@@ -123,7 +124,7 @@ If you wanted to deploy to a different region or change the instance size, youâ€
 
 ## For Kubernetes
 
-## Fix 1: [Image tagging Strategy]
+### Fix 1: [Image tagging Strategy]
 
 **What was wrong:**
 Earlier you were using same latest image tag, which will fail if image 
@@ -139,7 +140,7 @@ It will become hard to troubleshoot any failed and success build. If you deploy 
 
 ---
 
-## Fix 2: [Resource Management]
+### Fix 2: [Resource Management]
 
 **What was wrong:**
 Only basic requests are allocated for memory and CPU.
@@ -157,7 +158,7 @@ Without limits, a memory leak in Service A could grow until it consumes all the 
 
 ## For GitHub Action
 
-## Fix 1: [SSH ]
+### Fix 1: [SSH ]
 
 **What was wrong:**
 You used ssh to manually log in and run commands like docker pull and docker restart.
@@ -173,7 +174,7 @@ With SSH, if the connection drops halfway through, your server might be left in 
 
 ---
 
-## Fix 2: [Image versioning]
+### Fix 2: [Image versioning]
 
 **What was wrong:**
 You were pushing and pulling the latest tag.
@@ -189,7 +190,7 @@ If a deployment fails, you can't easily "go back" because you've already overwri
 
 ---
 
-## Fix 3: [Secrets Handling]
+### Fix 3: [Secrets Handling]
 
 **What was wrong:**
 You had credentials stored in plain text or were passing them through insecure SSH sessions.
