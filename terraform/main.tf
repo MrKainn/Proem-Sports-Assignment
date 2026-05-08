@@ -1,5 +1,5 @@
 provider "aws" {
-  region     = "us-east-1"
+  region     = var.aws_region
 }
 
 terraform {
@@ -38,4 +38,8 @@ resource "aws_security_group" "app_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+output "instance_public_ip" {
+  value = aws_instance.app.public_ip
 }
