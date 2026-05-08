@@ -1,22 +1,43 @@
-name: CI/CD Pipeline
+name: Production CI/CD
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Build and push
-        run: |
-          docker login -u myuser -p mypassword123
-          docker build -t myorg/devops-app:latest ./service-a
-          docker push myorg/devops-app:latest
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.0
 
-      - name: Deploy to server
+      - name: Infrastructure Sync
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@203.0.113.45 "docker pull myorg/devops-app:latest && docker restart service-a"
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push Images
+        uses: docker/build-push-action@v5
+        with:
+          context: ./service-a
+          push: true
+          tags: myorg/service-a:${{ github.sha }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          sed -i "s/\${IMAGE_TAG}/${{ github.sha }}/g" k8s/deployment.yaml
+          kubectl apply -f k8s/deployment.yaml
